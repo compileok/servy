@@ -40,13 +40,10 @@ defmodule Servy.Parser do
 
     new_eaders = Map.put(headers, key, value)
 
-    IO.inspect new_eaders
-
     parse_headers(tail, new_eaders)
   end
 
   def parse_headers([], headers) do
-    IO.puts " It's done! "
     headers
   end
 
