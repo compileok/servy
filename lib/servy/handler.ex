@@ -9,6 +9,8 @@ defmodule Servy.Handler do
   import Servy.Parser, only: [parse: 1]
 
   alias Servy.Conv
+  alias Servy.BearController
+
 
   @doc "desc about the function"
   def handle(request) do
@@ -68,12 +70,17 @@ defmodule Servy.Handler do
     %{conv | status: 200, resp_body: "Elixir In Action, Elixir CookBook"}
   end
 
-  def route(%Conv{ method: "GET", path: "/book/" <> id} = conv) do
-    %{conv | status: 200, resp_body: "Elixir In Action #{id}" }
+  def route(%Conv{ method: "GET", path: "/bears"} = conv) do
+    BearController.index(conv)
   end
 
   def route(%Conv{ method: "POST", path: "/bears"} = conv) do
-    %{conv | status: 201, resp_body: "Create a  #{conv.params["type"]} bear named #{conv.params["name"]}! " }
+    BearController.create(conv, conv.params)
+  end
+
+  def route(%Conv{ method: "GET", path: "/bears/" <> id} = conv) do
+    params = Map.put(conv.params, "id", id)
+    BearController.show(conv, params)
   end
 
   def route(%Conv{ path: path } = conv) do
@@ -115,7 +122,7 @@ defmodule Servy.Handler do
     Content-Type: application/x-www-form-urlencoded
 
 
-    name=hello&type=black
+    name=hello&type=black1
     """
     response2 = Servy.Handler.handle(request2)
     IO.puts response2
