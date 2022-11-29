@@ -115,7 +115,7 @@ defmodule Servy.Handler do
   def test() do
     IO.puts "====== test is running ======"
     request2 = """
-    POST /bears HTTP/1.1
+    GET /bears HTTP/1.1
     Host: example.com
     User-Agent: Macintash/chrome
     Accept: */*
@@ -128,6 +128,21 @@ defmodule Servy.Handler do
     IO.puts response2
   end
 
+  def test2() do
+    IO.puts "====== test is running ======"
+    request2 = """
+    GET /bears/1 HTTP/1.1
+    Host: example.com
+    User-Agent: Macintash/chrome
+    Accept: */*
+    Content-Type: application/x-www-form-urlencoded
+
+
+    name=hello&type=black1
+    """
+    response2 = Servy.Handler.handle(request2)
+    IO.puts response2
+  end
 end
 
 # request = """
@@ -141,7 +156,7 @@ end
 # IO.puts response
 
 request2 = """
-POST /bears HTTP/1.1
+GET /bears/1 HTTP/1.1
 Host: example.com
 User-Agent: Macintash/chrome
 Accept: */*

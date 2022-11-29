@@ -19,6 +19,6 @@ Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_do
 and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
 be found at <https://hexdocs.pm/servy>.
 
-https://xx.com/video/BV1944y1p7XD/?p=15&spm_id_from=pageDriver&vd_source=3bf2604b1db6598e4fa14dffda710d80
+
 
 该看P16了
