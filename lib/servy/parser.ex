@@ -47,6 +47,9 @@ defmodule Servy.Parser do
     headers
   end
 
+  @doc """
+    pass param like xxx
+  """
   def parse_params("application/x-www-form-urlencoded", params_string) do
     params_string |> String.trim |> URI.decode_query
   end
