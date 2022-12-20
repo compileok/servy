@@ -1,41 +1,83 @@
 defmodule HandlerTest do
   use ExUnit.Case
   import Servy.Handler, only: [handle: 1]
-  
 
+  test "GET /wildthings" do
+    request = """
+    GET /wildthings HTTP/1.1\r
+    Host: example.com\r
+    User-Agent: ExampleBrowser/1.0\r
+    Accept: */*\r
+    \r
+    """
 
-  # request = """
-  # GET /book/1 HTTP/1.1
-  # Host: example.com
-  # User-Agent:
-  # Accept: */*
-  # """
+    response = handle(request)
 
-  # response = Servy.Handler.handle(request)
-  # IO.puts response
+    assert response == """
+           HTTP/1.1 200 OK\r
+           Content-Type: text/html\r
+           Content-Length: 20\r
+           \r
+           Bears, Lions, Tigers
+           """
+  end
 
-  # request2 = """
-  # GET /bears/1 HTTP/1.1
-  # Host: example.com
-  # User-Agent: Macintash/chrome
-  # Accept: */*
-  # Content-Type: application/x-www-form-urlencoded
+  test "GET /api/bears" do
+    request = """
+    GET /api/bears HTTP/1.1\r
+    Host: example.com\r
+    User-Agent: ExampleBrowser/1.0\r
+    Accept: */*\r
+    \r
+    """
 
-  # name=hello&type=black
-  # """
-  # response2 = Servy.Handler.handle(request2)
-  # IO.puts response2
+    response = handle(request)
 
-  # request3 = """
-  # GET /about HTTP/1.1
-  # Host: example.com
-  # User-Agent:
-  # Accept: */*
-  # """
-  # response3 = Servy.Handler.handle(request3)
-  # IO.puts response3
+    expected_response = """
+    HTTP/1.1 200 OK\r
+    Content-Type: application/json\r
+    Content-Length: 605\r
+    \r
+    [{"type":"Brown","name":"Teddy","id":1,"hibernating":true},
+     {"type":"Black","name":"Smokey","id":2,"hibernating":false},
+     {"type":"Brown","name":"Paddington","id":3,"hibernating":false},
+     {"type":"Grizzly","name":"Scarface","id":4,"hibernating":true},
+     {"type":"Polar","name":"Snow","id":5,"hibernating":false},
+     {"type":"Grizzly","name":"Brutus","id":6,"hibernating":false},
+     {"type":"Black","name":"Rosie","id":7,"hibernating":true},
+     {"type":"Panda","name":"Roscoe","id":8,"hibernating":false},
+     {"type":"Polar","name":"Iceman","id":9,"hibernating":true},
+     {"type":"Grizzly","name":"Kenai","id":10,"hibernating":false}]
+    """
 
-  # IO.puts "response4"
+    assert remove_whitespace(response) == remove_whitespace(expected_response)
+  end
 
-  
+  test "POST /api/bears" do
+    request = """
+    POST /api/bears HTTP/1.1\r
+    Host: example.com\r
+    User-Agent: ExampleBrowser/1.0\r
+    Accept: */*\r
+    Content-Type: application/json\r
+    Content-Length: 21\r
+    \r
+    {"name": "Breezly", "type": "Polar"}
+    """
+
+    response = handle(request)
+
+    assert response == """
+           HTTP/1.1 201 Created\r
+           Content-Type: text/html\r
+           Content-Length: 35\r
+           \r
+           Created a Polar bear named Breezly!
+           """
+  end
+
+  defp remove_whitespace(text) do
+    String.replace(text, ~r{\s}, "")
+  end
+
 end
