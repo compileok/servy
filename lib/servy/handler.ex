@@ -10,7 +10,7 @@ defmodule Servy.Handler do
 
   alias Servy.Conv
   alias Servy.BearController
-  alias Servy.Api.BearController
+  alias Servy.Api.BearController, as: ApiBearController
 
 
   @doc "desc about the function"
@@ -76,7 +76,7 @@ defmodule Servy.Handler do
   end
 
   def route(%Conv{ method: "GET", path: "/api/bears"} = conv) do
-    Servy.Api.BearController.index(conv)
+    ApiBearController.index(conv)
   end
 
   def route(%Conv{ method: "POST", path: "/bears"} = conv) do
@@ -84,6 +84,8 @@ defmodule Servy.Handler do
   end
 
   def route(%Conv{ method: "GET", path: "/bears/" <> id} = conv) do
+    IO.puts " ##### route to /bears/" <> id
+
     params = Map.put(conv.params, "id", id)
     BearController.show(conv, params)
   end

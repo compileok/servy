@@ -2,7 +2,7 @@ defmodule Servy.Parser do
 
   alias Servy.Conv
   def parse(request) do
-    IO.puts "==== parser ===="
+    IO.puts "==== parser start ===="
     # first_line = request |> String.split("\n") |> List.first
     # [method, path, version] = String.split(first_line," ")
     # %{ method: method, path: path, resp_body: ""}
@@ -12,10 +12,17 @@ defmodule Servy.Parser do
     #   |> String.split("\n")
     #   |> List.first
     #   |> String.split(" ")
+    IO.puts "=== parse request... "
+    IO.puts request
+    IO.puts "===================="
 
-    [top, params_string] = String.split(request, "\n\n")
+    String.split(request, "\n\n")|>IO.puts
 
-    [request_line | header_lines] = String.split(top, "\n")
+    [top, params_string] = String.split(request, "\r\n\r\n")
+    IO.puts "==================== parse top "<> top
+    IO.puts "=== parse params_string "<> params_string
+
+    [request_line | header_lines] = String.split(top, "\r\n")
 
     [method, path, _] = String.split(request_line, " ")
 
@@ -24,6 +31,7 @@ defmodule Servy.Parser do
     params = parse_params(headers["Content-Type"], params_string)
 
     IO.inspect header_lines
+    IO.puts "==== parser end ===="
 
     %Conv{
        method: method,
@@ -35,12 +43,17 @@ defmodule Servy.Parser do
   end
 
 
-  def parse_headers([head | tail], headers ) do
-    [key, value] = String.split(head, ": ")
+  # def parse_headers([head | tail], headers ) do
+  #   [key, value] = String.split(head, ": ")
+  #   new_eaders = Map.put(headers, key, value)
+  #   parse_headers(tail, new_eaders)
+  # end
 
-    new_eaders = Map.put(headers, key, value)
-
-    parse_headers(tail, new_eaders)
+  def parse_headers(header_lines) do
+    Enum.reduce(header_lines, %{}, fn line, headers_map ->
+      [key, value] = String.split(line, ": ")
+      Map.put(headers_map, key, value)
+    end)
   end
 
   def parse_headers([], headers) do
@@ -55,5 +68,6 @@ defmodule Servy.Parser do
   end
 
   def parse_params(_, _), do: %{}
+
 
 end
