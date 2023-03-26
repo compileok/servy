@@ -38,7 +38,8 @@ defmodule Servy.HttpServer do
 
     IO.puts "Connection accepted!\n"
     # Receive the request and sends a response over the client socket.
-    server(client_socket)
+    #server(client_socket)
+    spawn(fn -> server(client_socket) end)
 
     # Loop back to wait and accept the next connection.
     accept_loop(listen_socket)
@@ -49,6 +50,7 @@ defmodule Servy.HttpServer do
   sends a response back over the same socket.
   """
   def server(client_socket) do
+    IO.puts "#{inspect self()}: working on it!"
     client_socket
     |> read_request
     #|> generate_response
@@ -103,4 +105,3 @@ defmodule Servy.HttpServer do
   #   bin
   # end
 end
-

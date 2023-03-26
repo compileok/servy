@@ -2,31 +2,32 @@ defmodule Servy.Parser do
 
   alias Servy.Conv
   def parse(request) do
-    IO.puts "==== parser start ===="
-    # first_line = request |> String.split("\n") |> List.first
-    # [method, path, version] = String.split(first_line," ")
-    # %{ method: method, path: path, resp_body: ""}
 
-    # [method, path, _] =
-    #   request
-    #   |> String.split("\n")
-    #   |> List.first
-    #   |> String.split(" ")
     IO.puts "=== parse request... "
     IO.puts request
     IO.puts "===================="
 
-    String.split(request, "\n\n")|>IO.puts
+    String.split(request, "\n\n") |> IO.puts
 
     [top, params_string] = String.split(request, "\r\n\r\n")
     IO.puts "==================== parse top "<> top
-    IO.puts "=== parse params_string "<> params_string
+
+    IO.puts "===================="
+
+    IO.puts "==================== parse params_string "<> params_string
+
+    IO.puts "==================== "
 
     [request_line | header_lines] = String.split(top, "\r\n")
 
-    [method, path, _] = String.split(request_line, " ")
+    IO.puts "==================== request_line" <> request_line
 
-    headers = parse_headers(header_lines, %{})
+
+    [method, path, _] = String.split(request_line, " ")
+    IO.puts "==================== method" <> method
+    IO.puts "==================== path" <> path
+
+    headers = parse_headers(header_lines)
 
     params = parse_params(headers["Content-Type"], params_string)
 

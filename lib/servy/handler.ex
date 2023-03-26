@@ -8,10 +8,11 @@ defmodule Servy.Handler do
   import Servy.Plugins, only: [rewrite_path: 1, log: 1, track: 1]
   import Servy.Parser, only: [parse: 1]
 
+  alias Servy.VideoCam
   alias Servy.Conv
   alias Servy.BearController
   alias Servy.Api.BearController, as: ApiBearController
-
+  # alias Servy.Fetcher
 
   @doc "desc about the function"
   def handle(request) do
@@ -67,9 +68,37 @@ defmodule Servy.Handler do
     %{conv | status: 200, resp_body: "Wellcome to Elixir world."}
   end
 
+  def route(%Conv{ method: "GET", path: "/sensors"} = conv) do
+
+    task = Task.async(fn -> Servy.Tracker.get_location("bigfoot") end)
+
+    where_is_bigfoot = Task.await(task)
+
+    snapshots  =
+    ["cam-1", "cam-2", "cam-3"]
+    |> Enum.map(&Task.async(fn -> VideoCam.get_snapshot(&1) end))
+    |> Enum.map(&Task.await/1)
+    # snapshots  =
+    # ["cam-1", "cam-2", "cam-3"]
+    # |> Enum.map(&Fetcher.async(fn -> Servy.VideoCam.get_snapshot(&1) end))
+    # |> Enum.map(&Fetcher.get_result/1)
+
+    # pid4 = Fetcher.async(fn -> Servy.Tracker.get_location("bigfoot") end)
+
+    # where_is_bigfoot = Fetcher.get_result(pid4)
+
+    %{conv | status: 200, resp_body: inspect {snapshots, where_is_bigfoot}}
+  end
+
+  def route(%Conv{ method: "GET", path: "/hibiernate/"<>time} = conv) do
+    time |> String.to_integer |> :timer.sleep
+    %{conv | status: 200, resp_body: "Awake!"}
+  end
   def route(%Conv{ method: "GET", path: "/book"} = conv) do
+
     %{conv | status: 200, resp_body: "Elixir In Action, Elixir CookBook"}
   end
+
 
   def route(%Conv{ method: "GET", path: "/bears"} = conv) do
     BearController.index(conv)
