@@ -90,6 +90,15 @@ defmodule Servy.Handler do
     %{conv | status: 200, resp_body: inspect {snapshots, where_is_bigfoot}}
   end
 
+
+  def route(%Conv{ method: "POST", path: "/pledges"} = conv) do
+#
+  end
+
+  def route(%Conv{ method: "GET", path: "/pledges"} = conv) do
+
+  end
+
   def route(%Conv{ method: "GET", path: "/hibiernate/"<>time} = conv) do
     time |> String.to_integer |> :timer.sleep
     %{conv | status: 200, resp_body: "Awake!"}
