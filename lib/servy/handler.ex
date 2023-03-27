@@ -92,11 +92,11 @@ defmodule Servy.Handler do
 
 
   def route(%Conv{ method: "POST", path: "/pledges"} = conv) do
-#
+    Servy.PledgeController.create(conv, conv.params)
   end
 
   def route(%Conv{ method: "GET", path: "/pledges"} = conv) do
-
+    Servy.PledgeController.index(conv)
   end
 
   def route(%Conv{ method: "GET", path: "/hibiernate/"<>time} = conv) do
